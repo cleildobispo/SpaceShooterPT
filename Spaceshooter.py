@@ -18,10 +18,10 @@ from kivy.uix.floatlayout import FloatLayout
 ti = turtle.Screen()
 ti.bgcolor('black')
 ti.title('Space Shooter')
-ti.bgpic("D:/PROJETO/site-simples/Nova pasta/PP.png")
+ti.bgpic("./PP.png")
 #Desenhando a bordar e limitando
-turtle.register_shape(./inimigo.GIF")
-turtle.register_shape(./1.GIF")
+turtle.register_shape("inimigo.GIF")
+turtle.register_shape("1.GIF")
 
 
 border_pen = turtle.Turtle()
@@ -51,7 +51,7 @@ pontoVis.hideturtle()
 
 jogador = turtle.Turtle()
 jogador.color("white")
-jogador.shape("D:/PROJETO/site-simples/Nova Pasta/1.GIF")
+jogador.shape("1.GIF")
 jogador.penup()
 jogador.speed(0)
 jogador.setposition(0,-250)
@@ -67,7 +67,7 @@ for i in range(numero_inimigos):
     
 for inimigo in inimigos:
     inimigo.color("red")
-    inimigo.shape("D:/PROJETO/site-simples/Nova Pasta/inimigo.GIF")
+    inimigo.shape("inimigo.GIF")
     inimigo.penup()
     inimigo.speed(0)
     x = random.randint(-200, 280)
@@ -134,7 +134,7 @@ turtle.onkey(atirar, "space")
 #adicionando a movimentacção do inimigo
 
 
-while True:
+while True: 
     for inimigo in inimigos:
         x = inimigo.xcor()
         x += inimigovel
