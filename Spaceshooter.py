@@ -20,8 +20,8 @@ ti.bgcolor('black')
 ti.title('Space Shooter')
 ti.bgpic("D:/PROJETO/site-simples/Nova pasta/PP.png")
 #Desenhando a bordar e limitando
-turtle.register_shape("D:/PROJETO/site-simples/Nova Pasta/inimigo.GIF")
-turtle.register_shape("D:/PROJETO/site-simples/Nova Pasta/1.GIF")
+turtle.register_shape(./inimigo.GIF")
+turtle.register_shape(./1.GIF")
 
 
 border_pen = turtle.Turtle()
