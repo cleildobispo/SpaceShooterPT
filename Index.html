@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Shooter</title>
+    <style>
+        canvas {
+            background: black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script src="spaceshooter.js"></script>
+
+    // spaceshooter.js
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const ship = {
+    x: canvas.width / 2 - 25,
+    y: canvas.height - 60,
+    width: 50,
+    height: 50,
+    speed: 5,
+    dx: 0,
+    dy: 0
+};
+
+function drawShip() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
+}
+
+function clear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function newPos() {
+    ship.x += ship.dx;
+    ship.y += ship.dy;
+
+    if (ship.x < 0) ship.x = 0;
+    if (ship.x + ship.width > canvas.width) ship.x = canvas.width - ship.width;
+    if (ship.y < 0) ship.y = 0;
+    if (ship.y + ship.height > canvas.height) ship.y = canvas.height - ship.height;
+}
+
+function update() {
+    clear();
+    drawShip();
+    newPos();
+    requestAnimationFrame(update);
+}
+
+function moveRight() {
+    ship.dx = ship.speed;
+}
+
+function moveLeft() {
+    ship.dx = -ship.speed;
+}
+
+function moveUp() {
+    ship.dy = -ship.speed;
+}
+
+function moveDown() {
+    ship.dy = ship.speed;
+}
+
+function keyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+        moveRight();
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        moveLeft();
+    } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+        moveUp();
+    } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+        moveDown();
+    }
+}
+
+function keyUp(e) {
+    if (
+        e.key === 'ArrowRight' ||
+        e.key === 'Right' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'Left' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'Up' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'Down'
+    ) {
+        ship.dx = 0;
+        ship.dy = 0;
+    }
+}
+
+update();
+
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp);
+
+const projectiles = [];
+
+function drawProjectile(projectile) {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(projectile.x, projectile.y, projectile.width, projectile.height);
+}
+
+function moveProjectiles() {
+    projectiles.forEach((projectile, index) => {
+        projectile.y -= projectile.speed;
+        if (projectile.y < 0) {
+            projectiles.splice(index, 1);
+        }
+    });
+}
+
+function shoot() {
+    const projectile = {
+        x: ship.x + ship.width / 2 - 2.5,
+        y: ship.y,
+        width: 5,
+        height: 10,
+        speed: 7
+    };
+    projectiles.push(projectile);
+}
+
+function keyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+        moveRight();
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        moveLeft();
+    } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+        moveUp();
+    } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+        moveDown();
+    } else if (e.key === ' ') {
+        shoot();
+    }
+}
+
+function update() {
+    clear();
+    drawShip();
+    projectiles.forEach(drawProjectile);
+    moveProjectiles();
+    newPos();
+    requestAnimationFrame(update);
+}
+
+const enemies = [];
+
+function createEnemy() {
+    const enemy = {
+        x: Math.random() * (canvas.width - 50),
+        y: 0,
+        width: 50,
+        height: 50,
+        speed: 3
+    };
+    enemies.push(enemy);
+}
+
+function drawEnemy(enemy) {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+}
+
+function moveEnemies() {
+    enemies.forEach((enemy, index) => {
+        enemy.y += enemy.speed;
+        if (enemy.y > canvas.height) {
+            enemies.splice(index, 1);
+        }
+    });
+}
+
+function detectCollisions() {
+    projectiles.forEach((projectile, pIndex) => {
+        enemies.forEach((enemy, eIndex) => {
+            if (
+                projectile.x < enemy.x + enemy.width &&
+                projectile.x + projectile.width > enemy.x &&
+                projectile.y < enemy.y + enemy.height &&
+                projectile.y + projectile.height > enemy.y
+            ) {
+                projectiles.splice(pIndex, 1);
+                enemies.splice(eIndex, 1);
+            }
+        });
+    });
+}
+
+setInterval(createEnemy, 1000);
+
+function update() {
+    clear();
+    drawShip();
+    projectiles.forEach(drawProjectile);
+    moveProjectiles();
+    enemies.forEach(drawEnemy);
+    moveEnemies();
+    detectCollisions();
+    newPos();
+    requestAnimationFrame(update);
+}
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const ship = {
+    x: canvas.width / 2 - 25,
+    y: canvas.height - 60,
+    width: 50,
+    height: 50,
+    speed: 5,
+    dx: 0,
+    dy: 0
+};
+
+const projectiles = [];
+const enemies = [];
+
+function drawShip() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
+}
+
+function drawProjectile(projectile) {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(projectile.x, projectile.y, projectile.width, projectile.height);
+}
+
+function drawEnemy(enemy) {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+}
+
+function clear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function newPos() {
+    ship.x += ship.dx;
+    ship.y += ship.dy;
+
+    if (ship.x < 0) ship.x = 0;
+    if (ship.x + ship.width > canvas.width) ship.x = canvas.width - ship.width;
+    if (ship.y < 0) ship.y = 0;
+    if (ship.y + ship.height > canvas.height) ship.y = canvas.height - ship.height;
+}
+
+function moveProjectiles() {
+    projectiles.forEach((projectile, index) => {
+        projectile.y -= projectile.speed;
+        if (projectile.y < 0) {
+            projectiles.splice(index, 1);
+        }
+    });
+}
+
+function moveEnemies() {
+    enemies.forEach((enemy, index) => {
+        enemy.y += enemy.speed;
+        if (enemy.y > canvas.height) {
+            enemies.splice(index, 1);
+        }
+    });
+}
+
+function detectCollisions() {
+    projectiles.forEach((projectile, pIndex) => {
+        enemies.forEach((enemy, eIndex) => {
+            if (
+                projectile.x < enemy.x + enemy.width &&
+                projectile.x + projectile.width > enemy.x &&
+                projectile.y < enemy.y + enemy.height &&
+                projectile.y + projectile.height > enemy.y
+            ) {
+                projectiles.splice(pIndex, 1);
+                enemies.splice(eIndex, 1);
+            }
+        });
+    });
+}
+
+function shoot() {
+    const projectile = {
+        x: ship.x + ship.width / 2 - 2.5,
+        y: ship.y,
+        width: 5,
+        height: 10,
+        speed: 7
+    };
+    projectiles.push(projectile);
+}
+
+function createEnemy() {
+    const enemy = {
+        x: Math.random() * (canvas.width - 50),
+        y: 0,
+        width: 50,
+        height: 50,
+        speed: 3
+    };
+    enemies.push(enemy);
+}
+
+function keyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+        moveRight();
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        moveLeft();
+    } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+        moveUp();
+    } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+        moveDown();
+    } else if (e.key === ' ') {
+        shoot();
+    }
+}
+
+function keyUp(e) {
+    if (
+        e.key === 'ArrowRight' ||
+        e.key === 'Right' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'Left' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'Up' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'Down'
+    ) {
+        ship.dx = 0;
+        ship.dy = 0;
+    }
+}
+
+function update() {
+    clear();
+    drawShip();
+    projectiles.forEach(drawProjectile);
+    moveProjectiles();
+    enemies.forEach(drawEnemy);
+    moveEnemies();
+    detectCollisions();
+    newPos();
+    requestAnimationFrame(update);
+}
+
+setInterval(createEnemy, 1000);
+update();
+
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp);
+
+function moveRight() {
+    ship.dx = ship.speed;
+}
+
+function moveLeft() {
+    ship.dx = -ship.speed;
+}
+
+function moveUp() {
+    ship.dy = -ship.speed;
+}
+
+function moveDown() {
+    ship.dy = ship.speed;
+}
+
+
+</body>
+</html>
